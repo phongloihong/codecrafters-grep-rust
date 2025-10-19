@@ -8,9 +8,7 @@ fn match_pattern(input_line: &str, pattern: &str) -> bool {
     } else if pattern == "\\d" {
         input_line.chars().any(|c| c.is_numeric())
     } else if pattern == "\\w" {
-        input_line
-            .chars()
-            .any(|c| c.is_numeric() || c.is_alphabetic() || c == '_')
+        input_line.chars().any(|c| c.is_alphanumeric() || c == '_')
     } else {
         panic!("Unhandled pattern: {}", pattern)
     }
