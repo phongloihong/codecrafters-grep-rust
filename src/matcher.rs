@@ -35,7 +35,7 @@ impl Matcher for PatternType {
                     }
                     _ => {
                         let char_set: HashSet<char> = p.chars().collect();
-                        input.chars().any(|c| char_set.contains(c))
+                        input.chars().any(|c| char_set.contains(&c))
                     }
                 }
             }
