@@ -4,8 +4,8 @@ pub enum MatchError {
 
 pub enum PatternType {
     LiteralCharacter(String),
-    Digit(),
-    Word(),
+    Digit,
+    Word,
     CharacterGroup(String),
 }
 
@@ -17,8 +17,8 @@ impl Matcher for PatternType {
     fn matches(&self, input: &str) -> bool {
         match self {
             PatternType::LiteralCharacter(p) => input.contains(p),
-            PatternType::Digit() => input.chars().any(|c| c.is_ascii_digit()),
-            PatternType::Word() => input.chars().any(|c| c.is_alphanumeric() || c == '_'),
+            PatternType::Digit => input.chars().any(|c| c.is_ascii_digit()),
+            PatternType::Word => input.chars().any(|c| c.is_alphanumeric() || c == '_'),
             PatternType::CharacterGroup(p) => {
                 let begin_char = match p.chars().next() {
                     Some(c) => c,
@@ -41,8 +41,8 @@ impl PatternType {
     pub fn new(pattern: &str) -> Result<PatternType, MatchError> {
         match pattern {
             p if p.len() == 1 => Ok(PatternType::LiteralCharacter(p.to_string())),
-            "\\d" => Ok(PatternType::Digit()),
-            "\\w" => Ok(PatternType::Word()),
+            "\\d" => Ok(PatternType::Digit),
+            "\\w" => Ok(PatternType::Word),
             p if p.starts_with('[') && p.ends_with(']') => {
                 Ok(PatternType::CharacterGroup(p[1..(p.len() - 1)].to_string()))
             }
