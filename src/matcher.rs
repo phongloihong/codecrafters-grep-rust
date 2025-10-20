@@ -28,7 +28,7 @@ impl Matcher for PatternType {
                 match begin_char {
                     '^' => {
                         let exclude_chars = &p[1..];
-                        !exclude_chars.chars().all(|c| p.contains(c))
+                        !exclude_chars.chars().all(|c| exclude_chars.contains(c))
                     }
                     _ => input.chars().any(|c| p.contains(c)),
                 }
