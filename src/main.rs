@@ -1,24 +1,11 @@
+mod matcher;
 use std::env;
 use std::io;
 use std::process;
 
-enum MatchError {
-    InvalidPattern(String),
-}
-
-fn match_pattern(input_line: &str, pattern: &str) -> Result<bool, MatchError> {
-    match pattern {
-        p if p.len() == 1 => Ok(input_line.contains(p)),
-        "\\d" => Ok(input_line.chars().any(|c| c.is_ascii_digit())),
-        "\\w" => Ok(input_line.chars().any(|c| c.is_alphanumeric() || c == '_')),
-        p if p.starts_with('[') && p.ends_with(']') => {
-            let match_str = &p[1..(p.len() - 1)];
-
-            Ok(input_line.chars().any(|c| match_str.contains(c)))
-        }
-        _ => Err(MatchError::InvalidPattern(pattern.to_string())),
-    }
-}
+use crate::matcher::MatchError;
+use crate::matcher::Matcher;
+use crate::matcher::PatternType;
 
 // Usage: echo <input_text> | your_program.sh -E <pattern>
 fn main() {
@@ -32,12 +19,16 @@ fn main() {
 
     io::stdin().read_line(&mut input_line).unwrap();
 
-    match match_pattern(&input_line, &pattern) {
-        Ok(true) => process::exit(0),
-        Ok(false) => process::exit(1),
-        Err(MatchError::InvalidPattern(p)) => {
-            eprint!("Unhandled pattern: {}", p);
-            process::exit(1);
+    let pattern_type = match PatternType::new(&pattern) {
+        Ok(t) => t,
+        Err(MatchError::InvalidPattern(e)) => {
+            println!("Invalid pattern {}", e);
+            process::exit(1)
         }
+    };
+
+    match pattern_type.matches(&input_line) {
+        true => process::exit(0),
+        false => process::exit(1),
     }
 }
