@@ -2,15 +2,21 @@ use std::env;
 use std::io;
 use std::process;
 
-fn match_pattern(input_line: &str, pattern: &str) -> bool {
-    if pattern.chars().count() == 1 {
-        input_line.contains(pattern)
-    } else if pattern == "\\d" {
-        input_line.chars().any(|c| c.is_numeric())
-    } else if pattern == "\\w" {
-        input_line.chars().any(|c| c.is_alphanumeric() || c == '_')
-    } else {
-        panic!("Unhandled pattern: {}", pattern)
+enum MatchError {
+    InvalidPattern(String),
+}
+
+fn match_pattern(input_line: &str, pattern: &str) -> Result<bool, MatchError> {
+    match pattern {
+        p if p.len() == 1 => Ok(input_line.contains(p)),
+        "\\d" => Ok(input_line.chars().any(|c| c.is_ascii_digit())),
+        "\\w" => Ok(input_line.chars().any(|c| c.is_alphanumeric() || c == '_')),
+        p if p.starts_with('[') && p.ends_with(']') => {
+            let match_str = &p[1..(p.len() - 1)];
+
+            Ok(input_line.chars().any(|c| match_str.contains(c)))
+        }
+        _ => Err(MatchError::InvalidPattern(pattern.to_string())),
     }
 }
 
@@ -26,10 +32,12 @@ fn main() {
 
     io::stdin().read_line(&mut input_line).unwrap();
 
-    // Uncomment this block to pass the first stage
-    if match_pattern(&input_line, &pattern) {
-        process::exit(0)
-    } else {
-        process::exit(1)
+    match match_pattern(&input_line, &pattern) {
+        Ok(true) => process::exit(0),
+        Ok(false) => process::exit(1),
+        Err(MatchError::InvalidPattern(p)) => {
+            eprint!("Unhandled pattern: {}", p);
+            process::exit(1);
+        }
     }
 }

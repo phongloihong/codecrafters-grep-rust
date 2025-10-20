@@ -1,0 +1,15 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 14
+    },
+    "auditLog": "/home/phong/code/Learn/rust/code-crafters/codecrafters-grep-rust/logs/.7d9b325e85ea8dbde2b0315ab1498347be2928b7-audit.json",
+    "files": [
+        {
+            "date": 1760926650596,
+            "name": "/home/phong/code/Learn/rust/code-crafters/codecrafters-grep-rust/logs/mcp-puppeteer-2025-10-20.log",
+            "hash": "b2b64603b6a821ae6c432d2971975e72f35846046f81ede009a41a2f5a8d044b"
+        }
+    ],
+    "hashType": "sha256"
+}
