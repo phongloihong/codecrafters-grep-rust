@@ -1,3 +1,5 @@
+use std::collections::HashSet;
+
 pub enum MatchError {
     InvalidPattern(String),
 }
@@ -28,9 +30,13 @@ impl Matcher for PatternType {
                 match begin_char {
                     '^' => {
                         let exclude_chars = &p[1..];
-                        !exclude_chars.chars().all(|c| exclude_chars.contains(c))
+                        let exclude_set: HashSet<char> = exclude_chars.chars().collect();
+                        input.chars().any(|c| !exclude_set.contains(&c))
                     }
-                    _ => input.chars().any(|c| p.contains(c)),
+                    _ => {
+                        let char_set: HashSet<char> = p.chars().collect();
+                        input.chars().any(|c| char_set.contains(c))
+                    }
                 }
             }
         }
