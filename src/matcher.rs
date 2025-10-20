@@ -40,7 +40,7 @@ impl PatternType {
             p if p.len() == 1 => Ok(PatternType::LiteralCharacter(p.to_string())),
             "\\d" => Ok(PatternType::Digit()),
             "\\w" => Ok(PatternType::Word()),
-            p if p.starts_with('[') => {
+            p if p.starts_with('[') && p.ends_with(']') => {
                 Ok(PatternType::CharacterGroup(p[1..(p.len() - 1)].to_string()))
             }
             _ => Err(MatchError::InvalidPattern(pattern.to_string())),
